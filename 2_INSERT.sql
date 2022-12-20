@@ -1,4 +1,4 @@
--- добавим 6 жанров.
+-- Добавим 6 жанров.
 INSERT INTO genre(genre_title) 
 VALUES
     ('Поп'), --1
@@ -8,7 +8,7 @@ VALUES
     ('хип-хоп'), --5
     ('Элкетро-хоп-рок'); --6
 
--- добавим 8 artists.
+-- Добавим 12 artists.
 INSERT INTO artist(artist_name) 
 VALUES
     ('Макс Корж'),  --1
@@ -18,10 +18,15 @@ VALUES
     ('Луи Дэниел Армстронг'), --5
     ('Depeche Mode'), --6
     ('Modern Talking'), --7
-    ('Полина Гагарина'); --8
+    ('Полина Гагарина'), --8
+
+    ('Иван'), --9
+    ('Сергей'), --10
+    ('Дима'), --11
+    ('Маша Даша'); --12
 
 
--- добавим 8 альбомов.
+-- Добавим 14 альбомов.
 INSERT INTO album(album_title, year_of_releas) 
 VALUES
     ('Животный мир', 2012), --1
@@ -31,10 +36,16 @@ VALUES
     ('What a Wonderful World', 1967), --5
     ('Black Celebration', 1986), --6
     ('Back for Good', 1998),  --7
-    ('Попроси у облаков', 2007); --8
+    ('Попроси у облаков', 2007), --8
 
+    ('First album', 2018), --9
+    ('Second album', 2019), --10
+    ('Third album', 2020), --11
+    ('Fourth album', 2021), --12
+    ('Fifth album', 2022), --13
+    ('Sixth album', 2022); --14
 
--- добавим 16 стр в таблицы связей.
+-- Добавим 28 записей в таблицы связей.
 INSERT INTO genre_artist(id_artist, id_genre) 
 VALUES
     (1, 1),
@@ -52,10 +63,23 @@ VALUES
     (7, 1),
     (7, 3),
     (8, 1),
-    (8, 4);
+    (8, 4),
+
+    (9, 1),
+    (9, 2),
+    (9, 3),
+    (10, 1),
+    (11, 2),
+    (11, 3),
+    (12, 1),
+    (12, 2),
+    (12, 3),
+    (12, 4),
+    (12, 5),
+    (12, 6);
 
 
--- добавим 8 записей в таблицы связей.
+-- Добавим 14 записей в таблицы связей.
 INSERT INTO album_artist(id_artist, id_album) 
 VALUES
     (1, 1),
@@ -65,9 +89,16 @@ VALUES
     (5, 5),
     (6, 6),
     (7, 7),
-    (8, 8);
+    (8, 8),
 
--- добавим 8 сборников.
+    (9, 9),
+    (10, 10),
+    (10, 11),
+    (11, 12),
+    (12, 13),
+    (12, 14);
+
+-- Добавим 14 сборников.
 INSERT INTO collection(collection_title, release_year) 
 VALUES
     ('Небо поможет нам', 2012), --1
@@ -77,9 +108,16 @@ VALUES
     ('What a Wonderful World', 1998), --5
     ('Greatest Hits', 1987), --6
     ('The Collection', 1991), --7
-    ('Morning', 2006); --8
+    ('Morning', 2006), --8
 
--- добавим 16 треков.
+    ('Morning collection 1', 2020), --9
+    ('Morning collection 2', 2019), --10
+    ('Greatest Hits collection 3', 2020), --11
+    ('Greatest Hits collection 4', 2017), --12
+    ('Hits collection 5', 2015), --13
+    ('Hits collection 6', 2015); --14
+
+-- Добавим 22 трека.
 INSERT INTO track(id_album, track_title, duration) 
 VALUES
     (1, 'Привет всем!', '00:01:06'), --1
@@ -97,9 +135,16 @@ VALUES
     (7, 'We Take the Chance', '00:04:06'), --13
     (7, 'You Can Win If You Want', '00:03:40'), --14
     (8, 'Ветер', '00:03:37'), --15
-    (8, 'Don"t Waste Your Time', '00:03:05'); --16
+    (8, 'Don"t Waste Your Time', '00:03:05'), --16
 
--- добавим 16 стр в таблицы связей.
+    (9, 'Music track 1', '00:03:17'), --17
+    (10, 'Music track 2', '00:02:18'), --18
+    (11, 'Music track 3', '00:01:19'), --19
+    (12, 'Music track 4', '00:04:20'), --20
+    (13, 'Music track 5', '00:05:21'), --21
+    (14, 'Music track 6', '00:06:22'); --22
+
+-- Добавим 28 записей в таблицы связей.
 INSERT INTO track_collection(id_collection,	id_track) 
 VALUES
     (1, 1),
@@ -117,5 +162,17 @@ VALUES
     (7, 13),
     (7, 14),
     (8, 15),
-    (8, 16);
+    (8, 16),
 
+    (9, 17),
+    (9, 1),
+    (10, 18),
+    (10, 2),
+    (11, 19),
+    (11, 3),
+    (12, 20),
+    (12, 4),
+    (13, 21),
+    (13, 5),
+    (14, 22),
+    (14, 6);
