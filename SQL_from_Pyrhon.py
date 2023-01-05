@@ -11,7 +11,7 @@ def create_db(conn):
     # создание таблиц
     cur.execute("""
         CREATE TABLE IF NOT EXISTS client(
-           id SERIAL NOT NULL PRIMARY KEY,
+           id SERIAL PRIMARY KEY,
            first_name VARCHAR(40),
            last_name VARCHAR(40),
            email VARCHAR(40)
@@ -21,7 +21,8 @@ def create_db(conn):
         CREATE TABLE IF NOT EXISTS phones(
            id SERIAL PRIMARY KEY,
            phones VARCHAR(40),
-           client_id INTEGER REFERENCES client(id)
+           client_id INTEGER NOT NULL, 
+           FOREIGN KEY (client_id) REFERENCES client (id)
         );
         """)
 
@@ -51,8 +52,8 @@ with psycopg2.connect(database="test", user="postgres", password="5a64Postgres5a
     with conn.cursor() as cur:
         conn.autocommit = True
         # create_db(conn)
-        # add_client(conn, "4Dima", "Sidorov4", "4DimaSidorov@gmail.com", "44444444")
-        add_phone(conn, "3333333", 4)
+        # add_client(conn, "5Dima", "5Sidorov", "DimaSidorov@gmail.com", "55555", 5)
+        add_phone(conn, "55555553333333444444", 5)
 
 
 
