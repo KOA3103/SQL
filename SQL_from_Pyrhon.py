@@ -14,27 +14,39 @@ def create_db(conn):
            id SERIAL PRIMARY KEY,
            first_name VARCHAR(40),
            last_name VARCHAR(40),
-           email VARCHAR(40)
+           email VARCHAR(40),
+           phones VARCHAR(40)
         );
         """)
+
     cur.execute("""
         CREATE TABLE IF NOT EXISTS phones(
            id SERIAL PRIMARY KEY,
            phones VARCHAR(40),
-           client_id INTEGER NOT NULL, 
-           FOREIGN KEY (client_id) REFERENCES client (id)
+           client_id INTEGER not null REFERENCES client (id)
         );
         """)
 
-def add_client(conn, first_name, last_name, email, phones=None, client_id=None):
-    cur.execute(""" INSERT INTO client(first_name, last_name, email) VALUES(%s, %s, %s);
-        """, (first_name, last_name, email))
-    cur.execute(""" INSERT INTO phones(phones, client_id) VALUES(%s, %s);
-                """, (phones, client_id))
 
-def add_phone(conn, client_id, phones):
-    cur.execute(""" INSERT INTO phones(phones, client_id) VALUES(%s, %s);
-            """, (client_id, phones))
+
+
+def add_client(conn):
+    client_records = ", ".join(["%s"] * len(client))
+    cur.execute((
+        f"INSERT INTO client(first_name, last_name, email, phones) "
+        f"VALUES {client_records}"
+    ), client)
+    # cur.execute(""" INSERT INTO phones(phones, client_id) VALUES(%s, %s);
+    #             """, (phones, client_id))
+
+
+
+def add_phone(conn):
+    phones_records = ", ".join(["%s"] * len(phones))
+    cur.execute((
+        f"INSERT INTO phones(phones, client_id) "
+        f"VALUES {phones_records}"
+    ), phones)
 
 # def change_client(conn, client_id, first_name=None, last_name=None, email=None, phones=None):
 #     pass
@@ -48,12 +60,33 @@ def add_phone(conn, client_id, phones):
 # def find_client(conn, first_name=None, last_name=None, email=None, phone=None):
 #     pass
 
-with psycopg2.connect(database="test", user="postgres", password="postgres" ) as conn:
+
+with psycopg2.connect(database="test", user="postgres", password="5a64Postgres5a64" ) as conn:
     with conn.cursor() as cur:
         conn.autocommit = True
         # create_db(conn)
-        # add_client(conn, "5Dima", "5Sidorov", "DimaSidorov@gmail.com", "55555", 5)
-        add_phone(conn, "55555553333333444444", 5)
+
+        client = [
+            ("Aaaaa", "AAAAAA", "AaaAAA@gmail.com", "1111"),
+            ("Bbbbb", "BBBBBB", "BbbbBBB@gmail.com", "2222"),
+            ("Ccccc", "CCCCCC", "CcccCCC@gmail.com", "3333"),
+            ("Ddddd", "DDDDDD", "DdddDDD@gmail.com", "4444"),
+            ("Eeeee", "EEEEEEE", "EeeeEEE@gamil.com", "5555"),
+        ]
+        add_client(conn)
+
+        phones = [
+            ("+1111", 1),
+            ("+2222", 1),
+            ("+3333", 1),
+            ("+4444", 2),
+            ("+5555", 2),
+        ]
+        # add_phone(conn)
+
+
+
+
 
 
 
