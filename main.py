@@ -1,141 +1,115 @@
-# import psycopg2
-#
-#
-# with psycopg2.connect(database="test", user="postgres", password="5a64Postgres5a64") as conn:
-#     with conn.cursor() as cur:
-#         #удаление таблиц
-#         cur.execute("""
-#         DROP TABLE homework;
-#         DROP TABLE course;
-#         """)
-#
-#         # создание таблиц
-#         cur.execute("""
-#         CREATE TABLE IF NOT EXISTS course(
-#             id SERIAL PRIMARY KEY,
-#             name VARCHAR(40) UNIQUE
-#         );
-#         """)
-#         cur.execute("""
-#         CREATE TABLE IF NOT EXISTS homework(
-#             id SERIAL PRIMARY KEY,
-#             number INTEGER NOT NULL,
-#             description TEXT NOT NULL,
-#             course_id INTEGER NOT NULL REFERENCES course(id)
-#         );
-#         """)
-#         conn.commit()  # фиксируем в БД
-#
-#         # наполнение таблиц (C из CRUD)
-#         cur.execute("""
-#         INSERT INTO course(name) VALUES('Python') RETURNING id, name;
-#         """)
-#         conn.commit()  # фиксируем в БД
-#         print(cur.fetchone())  # запрос данных автоматически зафиксирует изменения
-#
-#         cur.execute("""
-#         INSERT INTO course(name) VALUES('Java') RETURNING id, name;
-#         """)
-#         print(cur.fetchone())  # запрос данных автоматически зафиксирует изменения
-#
-#         cur.execute("""
-#         INSERT INTO homework(number, description, course_id) VALUES(1, 'простое дз', 1) RETURNING number, description, course_id;
-#         """)
-#         # conn.commit()  # фиксируем в БД
-#         print(cur.fetchone())  # запрос данных автоматически зафиксирует изменения
+import sqlalchemy
+from sqlalchemy.orm import sessionmaker
+import sqlalchemy as sq
+from sqlalchemy.orm import declarative_base, relationship
 
-        # извлечение данных (R из CRUD)
-        # cur.execute("""
-        # SELECT * FROM course;
-        # """)
-        # print('fetchall', cur.fetchall())  # извлечь все строки
-        #
-        # cur.execute("""
-        # SELECT * FROM course;
-        # """)
-        # print(cur.fetchone())  # извлечь первую строку (аналог LIMIT 1)
-        #
-        # cur.execute("""
-        # SELECT * FROM course;
-        # """)
-        # print(cur.fetchmany(3))  # извлечь первые N строк (аналог LIMIT N)
+Base = declarative_base()
 
-        # cur.execute("""
-        # SELECT name FROM course;
-        # """)
-        # print(cur.fetchall())
-        #
-        # cur.execute("""
-        # SELECT id FROM course WHERE name='Python';
-        # """)
-        # print(cur.fetchone())
+class Course(Base):
+    __tablename__ = "course"
 
-        # cur.execute("""
-        # SELECT id FROM course WHERE name='{}';
-        # """.format("Python"))  # плохо - возможна SQL инъекция
-        # print(cur.fetchone())
+    id = sq.Column(sq.Integer, primary_key=True)
+    name = sq.Column(sq.String(length=40), unique=True)
+    homework = relationship("Homework", back_populates="course")
+    # homework = relationship("Homework", backref="course")
+    def __str__(self):
+        return f'Course {self.id}: -> {self.name}'
 
-        # cur.execute("""
-        # SELECT id FROM course WHERE name=%s;
-        # """, ("Python",))  # хорошо, обратите внимание на кортеж
-        # print(cur.fetchone())
+class Homework(Base):
+    __tablename__ = "homework"
+    id = sq.Column(sq.Integer, primary_key=True)
+    number = sq.Column(sq.Integer, nullable=False)
+    description = sq.Column(sq.Text, nullable=False)
+    course_id = sq.Column(sq.Integer, sq.ForeignKey("course.id"), nullable=False)
+    course = relationship("Course", back_populates="homework")
+    # course = relationship("Course", backref="homeworks")
 
-        # def get_course_id(cursor, name: str) -> int:
-        #     cursor.execute("""
-        #     SELECT id, name FROM course WHERE name=%s;
-        #     """, (name,))
-        #     return cur.fetchall()[0][1]
-        # # python_id = get_course_id(cur, 'Python')
-        # # print('python_id пайтон номер', python_id)
-        # print('python_id пайтон номер', get_course_id(cur, 'Python'))
-
-        # cur.execute("""
-        # INSERT INTO homework(number, description, course_id) VALUES(%s, %s, %s);
-        # """, (2, "задание посложнее", 1))
-        # conn.commit()  # фиксируем в БД
-        #
-        # cur.execute("""
-        # SELECT * FROM homework;
-        # """)
-        # print(cur.fetchall()[1][2])
-
-        # обновление данных (U из CRUD)
-        # cur.execute("""
-        # UPDATE course SET name=%s WHERE id=%s;
-        # """, ('Python Advanced', 2))
-        # cur.execute("""
-        # SELECT * FROM course;
-        # """)
-        # print(cur.fetchall())  # запрос данных автоматически зафиксирует изменения
-
-        # # удаление данных (D из CRUD)
-        # cur.execute("""
-        # DELETE FROM homework WHERE id=%s;
-        # """, (1,))
-        # cur.execute("""
-        # SELECT * FROM homework;
-        # """)
-        # print(cur.fetchall())  # запрос данных автоматически зафиксирует изменения
-
-# conn.close()
-
-# import pyautogui
-# import time
-# while True:
-#     pyautogui.moveRel(5, 10)
-#     time.sleep(1)
-
-# a, *b, c, d = [1, 3, 'f']
-# print(a)
-# print(b)
-# print(c)
-# print(d)
+    def __str__(self):
+        return f'Homework id:{self.id} -> (number: {self.number},{self.description}), course_id: {self.course_id}'
 
 
+def create_tables(engine):
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)
 
-print(ord("5")+ord("a")+ord("6")+ord("4"))
-print(ord("5")+ord("a")+ord("6")+ord("4"))
-print(ord("a"), ord("а"), ord("a"), ord("а"), ord("a"), ord("а"))
 
+DSN = 'postgresql://postgres:5a64Postgres5a64@localhost:5432/test'
+engine = sqlalchemy.create_engine(DSN)
 
-print(chr(888), chr(1666))
+create_tables(engine)
+
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# создание объектов
+course1 = Course(name="Python")
+course2 = Course(name="Jawa")
+course3 = Course(name="C++")
+
+print(course1.id)
+
+session.add_all([course1, course2, course3])
+session.commit() # фиксируем изменения
+print(course1.id, course2.id, course3.id)
+
+# создание объектов
+hw1 = Homework(number=1, description='простая дз', course_id=1)
+hw2 = Homework(number=2, description='сложное дз', course_id=2)
+session.add_all([hw1, hw2]) # добавляем all
+# session.add(hw1) # добавляем по одному за раз
+# session.add(hw2)
+session.commit() # фиксируем изменения
+
+# запросы
+# for i in session.query(Course).all():
+#     print(i)
+# for i in session.query(Homework).filter(Homework.number > 1).all():
+#     print(i)
+
+# for i in session.query(Homework).filter(Homework.description.like('%сл%')).all():
+#     print(i)
+
+# for i in session.query(Course).join(Homework.course).filter(Homework.number == 1).all():
+# for i in session.query(Course).join(Homework.course).all():
+#     print(i)
+
+# q = session.query(Course).join(Homework.course).filter(Homework.number == 1)
+# print(q)
+# for s in q.all():
+#     print(s.id, s.name)
+#     for hw in s.homework:
+#         print("\t", hw.id, hw.number, hw.description)
+
+# вложенный запрос
+# subq = session.query(Homework).filter(Homework.description.like("%сложн%")).subquery()
+# q = session.query(Course).join(subq, Course.id == subq.c.course_id)
+# # print(subq)
+# for s in q.all():
+#     print(s.id, s.name)
+#     for hw in s.homework:
+#         print("\t", hw.id, hw.number, hw.description)
+
+# обновление объектов
+session.query(Course).filter(Course.name == "Jawa").update({"name": "NEW JavaScript"})
+session.commit()  # фиксируем изменения
+
+session.query(Homework).filter(Homework.description == "сложное дз").update({"number": 3})
+session.commit()  # фиксируем изменения
+
+session.query(Homework).filter(Homework.description == "сложное дз").update({"description": "не выполнимое"})
+session.commit()  # фиксируем изменения
+
+# удаление объектов
+session.query(Homework).filter(Homework.number > 1).delete()
+session.commit()  # фиксируем изменения
+
+session.query(Course).filter(Course.name == "C++").delete()
+session.commit()  # фиксируем изменения
+
+for i in session.query(Homework).all():
+    print(i)
+
+for i in session.query(Course).all():
+    print(i)
+
+session.close()

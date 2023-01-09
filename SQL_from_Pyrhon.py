@@ -27,19 +27,12 @@ def create_db(conn):
         );
         """)
 
-
-
-
 def add_client(conn):
     client_records = ", ".join(["%s"] * len(client))
     cur.execute((
         f"INSERT INTO client(first_name, last_name, email, phones) "
         f"VALUES {client_records}"
     ), client)
-    # cur.execute(""" INSERT INTO phones(phones, client_id) VALUES(%s, %s);
-    #             """, (phones, client_id))
-
-
 
 def add_phone(conn):
     phones_records = ", ".join(["%s"] * len(phones))
@@ -56,9 +49,10 @@ def add_phone(conn):
 #
 # def delete_client(conn, client_id):
 #     pass
-#
-# def find_client(conn, first_name=None, last_name=None, email=None, phone=None):
-#     pass
+
+def find_client(conn, first_name=None, last_name=None, email=None, phone=None):
+    cur.execute("SELECT c.fist_name, phones from phones p join client c ON c.id = p.client_id GROUP BY p.fist_name, phones")
+    print(cur.fetchall())
 
 
 with psycopg2.connect(database="test", user="postgres", password="5a64Postgres5a64" ) as conn:
@@ -73,7 +67,7 @@ with psycopg2.connect(database="test", user="postgres", password="5a64Postgres5a
             ("Ddddd", "DDDDDD", "DdddDDD@gmail.com", "4444"),
             ("Eeeee", "EEEEEEE", "EeeeEEE@gamil.com", "5555"),
         ]
-        add_client(conn)
+        # add_client(conn)
 
         phones = [
             ("+1111", 1),
@@ -83,6 +77,8 @@ with psycopg2.connect(database="test", user="postgres", password="5a64Postgres5a
             ("+5555", 2),
         ]
         # add_phone(conn)
+
+        find_client("Aaaaa")
 
 
 
